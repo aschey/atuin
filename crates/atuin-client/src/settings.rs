@@ -45,6 +45,9 @@ pub enum SearchMode {
 
     #[serde(rename = "skim")]
     Skim,
+
+    #[serde(rename = "nucleo")]
+    Nucleo,
 }
 
 impl SearchMode {
@@ -54,6 +57,7 @@ impl SearchMode {
             SearchMode::FullText => "FULLTXT",
             SearchMode::Fuzzy => "FUZZY",
             SearchMode::Skim => "SKIM",
+            SearchMode::Nucleo => "NUCLEO",
         }
     }
     pub fn next(&self, settings: &Settings) -> Self {
@@ -61,9 +65,12 @@ impl SearchMode {
             SearchMode::Prefix => SearchMode::FullText,
             // if the user is using skim, we go to skim
             SearchMode::FullText if settings.search_mode == SearchMode::Skim => SearchMode::Skim,
+            SearchMode::FullText if settings.search_mode == SearchMode::Nucleo => {
+                SearchMode::Nucleo
+            }
             // otherwise fuzzy.
             SearchMode::FullText => SearchMode::Fuzzy,
-            SearchMode::Fuzzy | SearchMode::Skim => SearchMode::Prefix,
+            SearchMode::Fuzzy | SearchMode::Skim | SearchMode::Nucleo => SearchMode::Prefix,
         }
     }
 }

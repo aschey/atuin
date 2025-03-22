@@ -80,12 +80,16 @@ tracing-subscriber = { workspace = true }
 uuid = { workspace = true }
 sysinfo = "0.30.7"
 regex = "1.10.5"
+nucleo = "0.5"
+dyn-clone = "1.0.19"
 
 [target.'cfg(any(target_os = "windows", target_os = "macos"))'.dependencies]
 arboard = { version = "3.4", optional = true }
 
 [target.'cfg(target_os = "linux")'.dependencies]
-arboard = { version = "3.4", optional = true, features = ["wayland-data-control"] }
+arboard = { version = "3.4", optional = true, features = [
+  "wayland-data-control",
+] }
 
 [dev-dependencies]
 tracing-tree = "0.4"
