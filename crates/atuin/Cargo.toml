@@ -92,6 +92,8 @@ regex = "1.10.5"
 norm = { version = "0.1.1", features = ["fzf-v2"] }
 tempfile = { workspace = true }
 shlex = "1.3.0"
+nucleo = "0.5"
+dyn-clone = "1.0.19"
 
 [target.'cfg(any(target_os = "windows", target_os = "macos"))'.dependencies]
 arboard = { version = "3.4", optional = true }
