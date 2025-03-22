@@ -58,7 +58,10 @@ serde_with = "3.8.1"
 
 # encryption
 rusty_paseto = { version = "0.8.0", default-features = false }
-rusty_paserk = { version = "0.5.0", default-features = false, features = ["v4", "serde"] }
+rusty_paserk = { version = "0.5.0", default-features = false, features = [
+    "v4",
+    "serde",
+] }
 
 # sync
 urlencoding = { version = "2.1.0", optional = true }
@@ -73,6 +76,8 @@ crossterm = { workspace = true, features = ["serde"] }
 palette = { version = "0.7.5", features = ["serializing"] }
 strum_macros = "0.27"
 strum = { version = "0.27", features = ["strum_macros"] }
+lazy_static = "1.4.0"
+dyn-clone = "1.0.19"
 
 [dev-dependencies]
 tokio = { version = "1", features = ["full"] }

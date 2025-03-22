@@ -7,6 +7,7 @@ use std::{
 
 use async_trait::async_trait;
 use atuin_common::utils;
+use dyn_clone::{DynClone, clone_trait_object};
 use fs_err as fs;
 use itertools::Itertools;
 use rand::{Rng, distributions::Alphanumeric};
@@ -96,7 +97,7 @@ fn get_session_start_time(session_id: &str) -> Option<i64> {
 }
 
 #[async_trait]
-pub trait Database: Send + Sync + 'static {
+pub trait Database: DynClone + Send + Sync + 'static {
     async fn save(&self, h: &History) -> Result<()>;
     async fn save_bulk(&self, h: &[History]) -> Result<()>;
 
@@ -142,6 +143,8 @@ pub trait Database: Send + Sync + 'static {
 
     async fn get_dups(&self, before: i64, dupkeep: u32) -> Result<Vec<History>>;
 }
+
+clone_trait_object!(Database);
 
 // Intended for use on a developer machine and not a sync server.
 // TODO: implement IntoIterator
