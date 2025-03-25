@@ -2,6 +2,7 @@ use super::{SearchEngine, SearchState};
 use async_trait::async_trait;
 use atuin_client::{database::Database, history::History, settings::FilterMode};
 use eyre::Result;
+use itertools::Itertools;
 use norm::{
     Metric,
     fzf::{FzfParser, FzfV2},
@@ -18,6 +19,7 @@ use std::{
     },
 };
 use std::{sync::Arc, time::Duration};
+use time::OffsetDateTime;
 use tokio::sync::Notify;
 
 pub struct Search {
@@ -133,10 +135,25 @@ impl SearchEngine for Search {
             tokio::time::sleep(Duration::from_millis(10)).await;
         }
         let snapshot = self.nucleo.snapshot();
+        let matches = snapshot.matches();
+
+        let now = OffsetDateTime::now_utc().unix_timestamp();
         let items = snapshot
             .matched_items(..)
-            .map(|item| item.data.clone())
-            .take(200);
+            .take(200)
+            .enumerate()
+            .sorted_by(|(i1, item1), (i2, item2)| {
+                let match_res1 = matches[*i1];
+                let match_res2 = matches[*i2];
+
+                let diff1 = now - item1.data.timestamp.unix_timestamp();
+                let diff2 = now - item2.data.timestamp.unix_timestamp();
+                (match_res1.score as f64 - (diff1 as f64).log2())
+                    .partial_cmp(&(match_res2.score as f64 - (diff2 as f64).log2()))
+                    .unwrap_or(std::cmp::Ordering::Equal)
+            })
+            .rev()
+            .map(|(_, item)| item.data.clone());
         Ok(items.collect())
     }
 }
